@@ -1,4 +1,7 @@
-//A  Restaurant Project Struct style Dr_T Dr. Tyson McMillan 10-2-2019
+//Stewart Sheppard 
+// Assignment 5 
+// Date: 4-25-20
+// Based off the "A  Restaurant Project Struct style Dr_T Dr. Tyson McMillan 10-2-2019"
 
 #include <iostream>
 #include<string>
@@ -41,7 +44,9 @@ class MenuItemList
   char getAddLetter() const {return addLetter;}
   char getRemoveLetter() const {return removeLetter;}
   int getCount() const {return count; }
-};
+  //void print() { // print menu item data on demad }
+}; 
+
 
 //********Struct Style*******//
 //function definitions
@@ -65,7 +70,7 @@ void populateMenu(vector<MenuItem> &entireMenu)
   entireMenu.push_back(Item6); //add to the end of list the Item6
   entireMenu.push_back(Item7); //add to the end of list the Item7
 
-  vector<string> defaultMenuNames = {"Green Tea", "Burrito", "Item 3", "Item 4", "Item 5", "Item 6", "Item 7"}; 
+  vector<string> defaultMenuNames = {"Green Tea", "Burrito", "sPBJ", "sEscargo", "sPotPie", "sPizza", "sApple Pie"}; 
   vector<char> defaultAddLetters = {'A', 'B', 'C', 'D', 'E', 'F', 'G'}; 
   vector<char> defaultRemoveLetters = {'a', 'b', 'c', 'd', 'e', 'f', 'g'}; 
 
@@ -82,7 +87,7 @@ void populateMenu(vector<MenuItem> &entireMenu)
 
 
 }
-/// *******Class Style **** ??
+/// *******Class Style **** 
 //funtion definitions
 
 void populateObjectMenu(vector<MenuItemList> &entireMenu)
@@ -105,7 +110,7 @@ void populateObjectMenu(vector<MenuItemList> &entireMenu)
   entireMenu.push_back(Item6); //add to the end of list the Item6
   entireMenu.push_back(Item7); //add to the end of list the Item7
 
-  vector<string> defaultMenuNames = {"Green Tea", "Burrito", "Item 3", "Item 4", "Item 5", "Item 6", "Item 7"}; 
+  vector<string> defaultMenuNames = {"Green Tea", "Burrito", "PBJ", "Escargo", "Pot Pie", "Pizza", "Apple Pie"}; 
   vector<char> defaultAddLetters = {'A', 'B', 'C', 'D', 'E', 'F', 'G'}; 
   vector<char> defaultRemoveLetters = {'a', 'b', 'c', 'd', 'e', 'f', 'g'}; 
 
@@ -157,7 +162,7 @@ void showObjectMenu(vector<MenuItemList> &m) //Where to adjust the menu layout
 
 }
 
-
+//*************Structure Style ***************
 
 void acceptOrder(vector<MenuItem> &m)
 {
@@ -223,6 +228,73 @@ void acceptOrder(vector<MenuItem> &m)
  
 }
 
+//*************Class  Style ***************
+
+void acceptObjectOrder(vector<MenuItemList> &m)
+{
+  char option = '\0';// the user-selected menu item
+  double subtotal = 0.0; 
+
+  do
+  {
+    cout << "\nPlease choose an item (x to Exit): ";
+    cin >> option; 
+
+    for(int i=0; i < m.size(); i++)
+    {
+      if(option == m[i].getAddLetter())
+      
+      {
+        cout << "\nMenu Item " << m[i].getAddLetter() << " selected."; 
+        m[i].setCount(m[i].getCount() +1); //increment the count by 1
+        cout << "\033[2J\033[1;1H"; //clear screen 
+        cout << "\n1 UP on " << m[i].getName() << endl;
+        subtotal += m[i].getItemCost(); //increment the subtotal by the cost of the item 
+        showObjectMenu(m); //show the updated menu
+        cout << "\nSubtotal: $" << subtotal << endl;  
+      }
+      else if(option == m[i].getRemoveLetter())
+      {
+        cout << "\nRemove Item " << m[i].getRemoveLetter() << " selected."; 
+        if(m[i].getCount() > 0) //subtract if and only if the count is > 0
+        {
+          m[i].setCount(m[i].getCount() - 1); //decrement the count by 1
+          cout << "\033[2J\033[1;1H"; //clear screen 
+          cout << "\n1 DOWN on " << m[i].getName() << endl;
+          subtotal -= m[i].getItemCost(); //decrement the subtotal by the cost of the item
+          showObjectMenu(m); //show the updated menu
+          cout << "\nSubtotal: $" << subtotal << endl;  
+        }
+        else //the the user why you blocked item removal 
+        {
+            
+            cout << "\nItem count must be > 0 to remove: " << m[i].getName() << endl;
+        }
+      }
+      else if(
+                option != m[i].getAddLetter() && 
+                option != m[i].getRemoveLetter() &&
+                option != 'x' &&
+                option != 'X' 
+            ) //test for all of my valid inputs
+            {
+              if(i == 0)
+              {
+                cout << "\nInvalid input (" << option << "). Please try again." << endl; 
+              }  
+            }
+    }
+  }while(option != 'x' && option != 'X'); 
+  cout << "\nThank you for placing your order." << endl; 
+   // from the DrT Todo List in Assignement 5
+  //handle the tip process here
+  //handle reciept generation here
+  //calculate total due + tax + tip// accept payment type
+  //handle cash vs. credit (16 digit)
+  //
+ 
+}
+
 void printTextReceipt(vector<MenuItemList> &m)
 {
   fstream receipt;
@@ -244,15 +316,16 @@ int main()
   //******Struct Style*******//
 
 
-  vector<MenuItem> wholeMenu; 
+ /* vector<MenuItem> wholeMenu; 
   populateMenu(wholeMenu); //put some default values in the menu
   showMenu(wholeMenu); //print the current data of the menu on screen 
-  acceptOrder(wholeMenu); 
+  acceptOrder(wholeMenu); */
 
   //*****Class Style*****/
   vector<MenuItemList> ObjectMenu;
   populateObjectMenu(ObjectMenu); 
   showObjectMenu(ObjectMenu); // show the initial menu on screen
+  acceptObjectOrder(ObjectMenu);
   //solve and call acceptObjectOrder void function here
 
   printTextReceipt(ObjectMenu);
