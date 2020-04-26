@@ -10,7 +10,8 @@
 #include<fstream>
 using namespace std; 
 
-// ************struct Style *****//
+/*
+// ************struct Style ***** //
 struct MenuItem
 {
   string name;
@@ -20,6 +21,7 @@ struct MenuItem
   char removeLetter;
   int count; 
 };
+*/
 
 //*******Classs Style*******//
 class MenuItemList
@@ -31,6 +33,7 @@ class MenuItemList
     char addLetter;
     char removeLetter;
     int count;
+    double subtotal;
   public:
   void setName(string n) {name = n; }
   void setItemCosts(double iT){itemCost = iT;}
@@ -38,17 +41,19 @@ class MenuItemList
   void setAddLetter(char aL) {addLetter = aL;}
   void setRemoveLetter(char rL){removeLetter = rL;}
   void setCount(int c) {count = c;}
+  void setSubtotal(double s){subtotal = s;}
   string getName() const{return name;}
   double getItemCost() const {return itemCost;}
   string getDesc() const {return desc;}
   char getAddLetter() const {return addLetter;}
   char getRemoveLetter() const {return removeLetter;}
   int getCount() const {return count; }
+  double getSubtotal()const {return subtotal;}
   //void print() { // print menu item data on demad }
 }; 
 
-
-//********Struct Style*******//
+/*
+// ********Struct Style******* //
 //function definitions
 void populateMenu(vector<MenuItem> &entireMenu)
 {
@@ -86,7 +91,8 @@ void populateMenu(vector<MenuItem> &entireMenu)
   }
 
 
-}
+} */
+
 /// *******Class Style **** 
 //funtion definitions
 
@@ -130,7 +136,7 @@ void populateObjectMenu(vector<MenuItemList> &entireMenu)
 
 //****STruct Style*******/
 
-void showMenu(vector<MenuItem> &m) //Where to adjust the menu layout
+/*void showMenu(vector<MenuItem> &m) //Where to adjust the menu layout
 {
   cout << fixed << setprecision(2);//set doubles to 2 decimal places
   cout << "DrT's Effcient Menu" << endl; 
@@ -143,7 +149,7 @@ void showMenu(vector<MenuItem> &m) //Where to adjust the menu layout
     <<endl; 
   }
 
-}
+}*/
 
 
 //**********Class Style******/
@@ -162,7 +168,8 @@ void showObjectMenu(vector<MenuItemList> &m) //Where to adjust the menu layout
 
 }
 
-//*************Structure Style ***************
+/*
+// *************Structure Style ***************
 
 void acceptOrder(vector<MenuItem> &m)
 {
@@ -226,18 +233,30 @@ void acceptOrder(vector<MenuItem> &m)
   //handle cash vs. credit (16 digit)
   //
  
-}
+} */
 
 //*************Class  Style ***************
 
 void acceptObjectOrder(vector<MenuItemList> &m)
 {
   char option = '\0';// the user-selected menu item
+  char decision = '\0';
+  char paymentType = '\0';
   double subtotal = 0.0; 
+  double tip = 0.0;
+  double tipTotal = 0.0;
+  double tax = 0.0;
+  double totalwTax = 0.0;
+  double grandTotal = 0.0;
+  double amountTendered = 0.0;
+  double totalCashRecd = 0.0;
+  string ccNum;
 
+  
+ 
   do
   {
-    cout << "\nPlease choose an item (x to Exit): ";
+    cout << "\nPlease choose an item (x to Finalize Bill): ";
     cin >> option; 
 
     for(int i=0; i < m.size(); i++)
@@ -264,6 +283,7 @@ void acceptObjectOrder(vector<MenuItemList> &m)
           subtotal -= m[i].getItemCost(); //decrement the subtotal by the cost of the item
           showObjectMenu(m); //show the updated menu
           cout << "\nSubtotal: $" << subtotal << endl;  
+         
         }
         else //the the user why you blocked item removal 
         {
@@ -286,14 +306,80 @@ void acceptObjectOrder(vector<MenuItemList> &m)
     }
   }while(option != 'x' && option != 'X'); 
   cout << "\nThank you for placing your order." << endl; 
-   // from the DrT Todo List in Assignement 5
-  //handle the tip process here
-  //handle reciept generation here
-  //calculate total due + tax + tip// accept payment type
-  //handle cash vs. credit (16 digit)
-  //
+ 
+ // Calculate Tax and TIP 
+ cout << "Your subtotal is \n" << subtotal << ".\n" << endl;
+ tax = subtotal * .0825;
+ cout << "Your tax is $" << tax << endl;
+ totalwTax = subtotal + tax;
+ cout << "Your total cost is $" << totalwTax << endl;
+ cout << "Would you like to add a 20% tip?\n";
+ cout << "Press \"Y\" for \"Yes\" and \"M\" to give more.\n";
+ cin >> decision;
+    
+      
+      if (decision == 'Y' || decision == 'y')
+      {
+        tipTotal = subtotal * .20;
+        cout << "Your tip will be $" << tipTotal << endl;
+        grandTotal = totalwTax + tipTotal;
+        cout << "Your total cost will be $" << grandTotal << endl;
+      }
+      else if (decision == 'M'|| decision == 'm')
+      {  
+        cout << "Thanks for giving more than 20%.\n";
+        cout << "Please enter your generous amount in the form of a decimal!\n\n";
+        cout <<  "For example: .25 (25%), .30 (30%), etc.\n";
+        cin >> tip;
+        cout << "Thank you for your generous tip!\n";
+        tipTotal = subtotal * tip;
+        cout << "Your tip will be $" << tipTotal << endl;
+        grandTotal = totalwTax + tipTotal;
+        cout << "Your total cost will be $" << grandTotal << endl;
+        
+        }
+
+  //Payment type
+
+  cout << "Will you be paying with Cash or Card? \n";
+  cout << "Please enter in \"C\" for Cash and \"R\" for Card.\n";   
+  cin >> paymentType;  
+  if (paymentType == 'C' || paymentType == 'c')
+      {
+       cout << "Enter in the amount of cash received.\n";
+       cin >> totalCashRecd;
+        amountTendered = totalCashRecd - grandTotal;
+        cout << "Change will be $" << amountTendered << endl;
+      }
+      else if (paymentType == 'R'|| paymentType == 'r')
+      {
+          cout << "Enter in your 16 digit credit card number.";
+          cin >> ccNum;
+          if (ccNum.length() <= 16)
+          cout << "Please re-enter your card number and confirm it has 16 Digits.\n";
+          else 
+           cout << "Thank you for your payment.\n";
+           cout << "Your Card will be charged or debited :" << grandTotal << endl;
+
+      }
+  
+
+
+      
+
+ 
+
+  //caculate total due + tax + tip
+  // accept payment type
+  //handle cash vs. credit
+  //handle on-screen reciept generation here
+  //handle on the text file reciept generation here
+  //loop the program, reset item counts and total due
+  //until exit 
  
 }
+
+
 
 void printTextReceipt(vector<MenuItemList> &m)
 {
@@ -326,7 +412,7 @@ int main()
   populateObjectMenu(ObjectMenu); 
   showObjectMenu(ObjectMenu); // show the initial menu on screen
   acceptObjectOrder(ObjectMenu);
-  //solve and call acceptObjectOrder void function here
+ 
 
   printTextReceipt(ObjectMenu);
 
