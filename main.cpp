@@ -8,7 +8,22 @@
 #include<vector>
 #include<iomanip>
 #include<fstream>
+#include "colormod.h"
 using namespace std; 
+
+
+
+Color::Modifier red(Color::FG_RED);
+Color::Modifier blue(Color::FG_BLUE);
+Color::Modifier green(Color::FG_GREEN);
+Color::Modifier yellow(Color::FG_YELLOW);
+Color::Modifier def(Color::FG_DEFAULT);
+Color::Modifier redbg(Color::BG_RED);
+Color::Modifier greenbg(Color::BG_GREEN);
+Color::Modifier bluebg(Color::BG_BLUE);
+Color::Modifier defbg(Color::BG_DEFAULT);
+
+
 
 /*
 // ************struct Style ***** //
@@ -235,6 +250,24 @@ void acceptOrder(vector<MenuItem> &m)
  
 } */
 
+void printTextReceipt(vector<MenuItemList> &m) 
+{
+  fstream receipt;
+  receipt.open("receipt.txt", ios::out);
+ 
+  receipt.close();
+
+  fstream html;
+  html.open("index.html", ios::out);
+
+  html << "<html><head><title>Cool</title></head>";
+  html << "<body style=\"background-color:#000000; color:#FFFFFF;\">";
+  html << "<h1>" << m[2].getName() << "</h1>" << endl;
+  html << "</body></html>";
+}
+
+
+
 //*************Class  Style ***************
 
 void acceptObjectOrder(vector<MenuItemList> &m)
@@ -252,8 +285,6 @@ void acceptObjectOrder(vector<MenuItemList> &m)
   double totalCashRecd = 0.0;
   string ccNum;
 
-  
- 
   do
   {
     cout << "\nPlease choose an item (x to Finalize Bill): ";
@@ -312,9 +343,9 @@ void acceptObjectOrder(vector<MenuItemList> &m)
  tax = subtotal * .0825;
  cout << "Your tax is $" << tax << endl;
  totalwTax = subtotal + tax;
- cout << "Your total cost is $" << totalwTax << endl;
- cout << "Would you like to add a 20% tip?\n";
- cout << "Press \"Y\" for \"Yes\" and \"M\" to give more.\n";
+ cout << blue << "Your total cost is $" << totalwTax << def << endl;
+ cout << green << "Would you like to add a 20% tip?\n";
+ cout << "Press \"Y\" for \"Yes\" and \"M\" to give more.\n"<< def ; 
  cin >> decision;
     
       
@@ -327,22 +358,24 @@ void acceptObjectOrder(vector<MenuItemList> &m)
       }
       else if (decision == 'M'|| decision == 'm')
       {  
-        cout << "Thanks for giving more than 20%.\n";
+        cout << green << "Thanks for giving more than 20%.\n";
         cout << "Please enter your generous amount in the form of a decimal!\n\n";
-        cout <<  "For example: .25 (25%), .30 (30%), etc.\n";
+        cout <<  "For example: .25 (25%), .30 (30%), etc.\n" << def ;
         cin >> tip;
-        cout << "Thank you for your generous tip!\n";
+        cout << greenbg << "Thank you for your generous tip!\n" <<defbg ;
         tipTotal = subtotal * tip;
         cout << "Your tip will be $" << tipTotal << endl;
         grandTotal = totalwTax + tipTotal;
-        cout << "Your total cost will be $" << grandTotal << endl;
+        cout << "Your total cost will be $" << grandTotal << defbg << endl;
         
         }
 
   //Payment type
 
   cout << "Will you be paying with Cash or Card? \n";
-  cout << "Please enter in \"C\" for Cash and \"R\" for Card.\n";   
+  cout << "Please enter in \"C\" for Cash and \"R\" for Card.\n";  
+
+
   cin >> paymentType;  
   if (paymentType == 'C' || paymentType == 'c')
       {
@@ -350,24 +383,32 @@ void acceptObjectOrder(vector<MenuItemList> &m)
        cin >> totalCashRecd;
         amountTendered = totalCashRecd - grandTotal;
         cout << "Change will be $" << amountTendered << endl;
+        
       }
       else if (paymentType == 'R'|| paymentType == 'r')
-      {
-          cout << "Enter in your 16 digit credit card number.";
+      { 
+        cout << "Enter in your 16 digit credit card number.";
+        while (paymentType == 'R' || paymentType == 'r')
+        {
+        //cout << "Enter in your 16 digit credit card number.";
           cin >> ccNum;
-          if (ccNum.length() <= 16)
-          cout << "Please re-enter your card number and confirm it has 16 Digits.\n";
-          else 
-           cout << "Thank you for your payment.\n";
-           cout << "Your Card will be charged or debited :" << grandTotal << endl;
-
+          if (ccNum.length() == 16)
+              {
+              cout << "Thank you for your payment.\n";
+              cout << "Your Card will be charged or debited :" << grandTotal << endl;
+              }          
+          else if(ccNum.length() != 16)
+              {
+              cout << "Please re-enter your 16 digit card code.\n";
+              cin >> ccNum;         
+              } 
+        }  //end while loop
       }
-  
-
-
       
+      printTextReceipt(m);     
+         
+       
 
- 
 
   //caculate total due + tax + tip
   // accept payment type
@@ -376,26 +417,10 @@ void acceptObjectOrder(vector<MenuItemList> &m)
   //handle on the text file reciept generation here
   //loop the program, reset item counts and total due
   //until exit 
- 
-}
+ }
 
 
 
-void printTextReceipt(vector<MenuItemList> &m)
-{
-  fstream receipt;
-  receipt.open("recept.txt", ios::out);
-
-  receipt.close();
-
-  fstream html;
-  html.open("index.html", ios::out);
-
-  html << "<html><head><title>Cool</title></head>";
-  html << "<body style=\"background-color:#000000; color:#FFFFFF;\">";
-  html << "<h1>" << m[0].getName() << "</h1>" << endl;
-  html << "</body></html>";
-}
 
 int main() 
 {
@@ -412,8 +437,6 @@ int main()
   populateObjectMenu(ObjectMenu); 
   showObjectMenu(ObjectMenu); // show the initial menu on screen
   acceptObjectOrder(ObjectMenu);
- 
-
   printTextReceipt(ObjectMenu);
 
  return 0;
